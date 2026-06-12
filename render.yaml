@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://render.com/schema/render.yaml.json
+services:
+  - type: web
+    name: parksmart-ai-backend
+    runtime: docker
+    plan: free
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /swagger-ui.html
+    envVars:
+      - key: DB_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRATION_MINUTES
+        value: "1440"
+      - key: JPA_DDL_AUTO
+        value: update
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false

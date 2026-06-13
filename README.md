@@ -1,102 +1,162 @@
-# ParkSmart AI
+# SMART-PARKAI
 
-Production-quality full-stack smart vehicle park booking system for universities, shopping malls, hospitals, and office buildings.
+SMART-PARKAI is a full-stack smart vehicle parking booking system. It includes a Spring Boot REST API, PostgreSQL persistence, JWT authentication, role-based access, QR booking verification, admin analytics, and a React/Vite dashboard frontend.
 
-## Stack
+Live deployment:
 
-- Backend: Java 21, Spring Boot 3, Spring Security, JWT, Spring Data JPA, PostgreSQL, Maven, Lombok, Validation API, Swagger, JUnit
-- Frontend: React 19, Vite, React Router, Axios, Material UI, Recharts
-- Database: PostgreSQL, ready for Neon
+- Frontend: `https://smart-parkai.vercel.app`
+- Backend: `https://smart-parkai.onrender.com`
+- API base URL: `https://smart-parkai.onrender.com/api`
+- Swagger UI: `https://smart-parkai.onrender.com/swagger-ui.html`
 
-## Features
+## Tech Stack
 
-- JWT registration and login with BCrypt password hashing
+Backend:
+
+- Java 21
+- Spring Boot 3
+- Spring Security
+- JWT authentication
+- Spring Data JPA
+- PostgreSQL
+- Maven
+- Lombok
+- Bean Validation
+- Springdoc OpenAPI / Swagger
+- JUnit
+
+Frontend:
+
+- React 19
+- Vite
+- React Router
+- Axios
+- Material UI
+- Recharts
+
+Database and deployment:
+
+- PostgreSQL / Neon-ready
+- Render backend deployment
+- Vercel frontend deployment
+- Docker support
+
+## Main Features
+
+- User registration and login with JWT
+- BCrypt password hashing
 - USER and ADMIN roles
-- CRUD for users, vehicles, parking lots, parking slots, bookings, payments, and waiting queue entries
-- Smart waiting queue with `Queue<User>`
-- VIP booking priority with `PriorityQueue<Booking>`
-- Fast slot lookup with `HashMap<Long, ParkingSlot>`
-- Date-sorted booking grouping with `TreeMap<LocalDate, List<Booking>>`
-- Dynamic pricing from peak hours, weekend, and occupancy
-- QR code generation for bookings and QR verification endpoint
-- Admin dashboard analytics with charts
-- Search and filters on key resources
-- Responsive Material UI frontend with dark mode
-- SQL schema, ER diagram, Swagger docs, Docker configuration, and sample data seeder
+- Parking lot management
+- Parking slot management
+- Vehicle management
+- Booking management
+- Payment management
+- Waiting queue management
+- VIP booking priority support
+- Dynamic parking price calculation
+- QR code generation for bookings
+- QR booking verification endpoint
+- Admin dashboard analytics
+- Search and filters across key resources
+- Responsive Material UI interface
+- Dark mode support
+- Swagger API documentation
+- PostgreSQL schema documentation
+- Render and Vercel deployment configuration
 
-## Folder Structure
+## Project Structure
 
 ```text
-SmartPark/
+SMART-PARKAI/
   backend/
-    src/main/java/com/parksmartai/
-      config/ controller/ dto/ entity/ enums/ exception/ mapper/ repository/ security/ service/ util/
-    src/main/resources/application.yml
+    Dockerfile
     pom.xml
+    src/main/java/com/parksmartai/
+      config/
+      controller/
+      dto/
+      entity/
+      enums/
+      exception/
+      mapper/
+      repository/
+      security/
+      service/
+      util/
+    src/main/resources/application.yml
+    src/test/
   frontend/
-    src/api/ components/ context/ pages/ theme/
+    vercel.json
     package.json
-  database/schema.sql
-  docs/API_DOCUMENTATION.md
-  docs/ER_DIAGRAM.md
+    index.html
+    src/
+      api/
+      components/
+      context/
+      pages/
+      theme/
+  database/
+    schema.sql
+  docs/
+    API_DOCUMENTATION.md
+    ER_DIAGRAM.md
   docker-compose.yml
+  render.yaml
+  vercel.json
 ```
 
-## Environment
+## Environment Variables
 
-Create `.env` from `.env.example` and fill your Neon password/JWT secret.
+Never commit real `.env` files. The project ignores local env files through `.gitignore`.
 
-Backend reads:
+Backend variables:
 
-```text
-DB_URL
-DB_USERNAME
-DB_PASSWORD
-JWT_SECRET
-CORS_ALLOWED_ORIGINS
+```env
+DB_URL=jdbc:postgresql://<host>/<database>?sslmode=require
+DB_USERNAME=<database-user>
+DB_PASSWORD=<database-password>
+JWT_SECRET=<strong-secret-at-least-32-characters>
+JWT_EXPIRATION_MINUTES=1440
+JPA_DDL_AUTO=update
+CORS_ALLOWED_ORIGINS=http://localhost:5173,https://smart-parkai.vercel.app
 ```
 
-Frontend reads:
+Frontend variables:
 
-```text
-VITE_API_BASE_URL
+```env
+VITE_API_BASE_URL=http://localhost:8080/api
 ```
 
-## Deploy
+For production on Vercel:
 
-### Backend on Render
-
-1. Create a PostgreSQL database, for example on Neon.
-2. In Render, create a new Blueprint from this repository. Render will use `render.yaml`.
-3. Set these backend environment variables in Render:
-
-```text
-DB_URL
-DB_USERNAME
-DB_PASSWORD
-JWT_SECRET
-CORS_ALLOWED_ORIGINS=https://your-vercel-domain.vercel.app
+```env
+VITE_API_BASE_URL=https://smart-parkai.onrender.com/api
 ```
 
-`JPA_DDL_AUTO` defaults to `update` for deployment. Use `validate` after the database schema is stable.
+## Local Setup
 
-### Frontend on Vercel
+### Prerequisites
 
-1. Import this repository into Vercel.
-2. Keep the repository root as the project root. Vercel will use `vercel.json`.
-3. Set:
+- Java 21
+- Maven
+- Node.js 22 or later
+- PostgreSQL database, or a Neon PostgreSQL connection string
 
-```text
-VITE_API_BASE_URL=https://your-render-service.onrender.com/api
-```
+### Backend
 
-After Vercel gives you a production URL, add that URL to the backend `CORS_ALLOWED_ORIGINS` value in Render.
+Create `backend/.env` locally or set the same variables in your terminal. The application reads environment variables through Spring configuration.
 
-## Run Backend
+Run:
 
 ```bash
 cd backend
 mvn spring-boot:run
+```
+
+Backend URL:
+
+```text
+http://localhost:8080
 ```
 
 Swagger UI:
@@ -105,14 +165,15 @@ Swagger UI:
 http://localhost:8080/swagger-ui.html
 ```
 
-Seeded users:
+### Frontend
 
-```text
-admin@parksmart.ai / admin123
-user@parksmart.ai / user123
+Create `frontend/.env`:
+
+```env
+VITE_API_BASE_URL=http://localhost:8080/api
 ```
 
-## Run Frontend
+Run:
 
 ```bash
 cd frontend
@@ -120,26 +181,230 @@ npm install
 npm run dev
 ```
 
-Open:
+Frontend URL:
 
 ```text
 http://localhost:5173
 ```
 
+## Demo Users
+
+The backend seed data creates demo users when the database is empty.
+
+```text
+Admin:
+admin@parksmart.ai / admin123
+
+User:
+user@parksmart.ai / user123
+```
+
+For a real production deployment, change or remove seeded demo credentials.
+
+## API Overview
+
+Base API path:
+
+```text
+/api
+```
+
+Auth endpoints:
+
+| Method | Endpoint | Access | Description |
+| --- | --- | --- | --- |
+| POST | `/api/auth/register` | Public | Register a user |
+| POST | `/api/auth/login` | Public | Login and receive a JWT |
+
+Main modules:
+
+| Module | Endpoints |
+| --- | --- |
+| Users | `/api/users` |
+| Vehicles | `/api/vehicles` |
+| Parking lots | `/api/parking-lots` |
+| Parking slots | `/api/parking-slots` |
+| Bookings | `/api/bookings` |
+| Payments | `/api/payments` |
+| Waiting queue | `/api/waiting-queue` |
+| Admin analytics | `/api/admin/dashboard` |
+
+Protected requests require:
+
+```http
+Authorization: Bearer <jwt>
+```
+
+More API details are in `docs/API_DOCUMENTATION.md`.
+
+## Database
+
+The SQL schema is documented in:
+
+```text
+database/schema.sql
+```
+
+The ER diagram is documented in:
+
+```text
+docs/ER_DIAGRAM.md
+```
+
+During deployment, `JPA_DDL_AUTO=update` lets Hibernate create or update tables. After the schema is stable, use `validate` for stricter production behavior.
+
+## Deploy Backend on Render
+
+Use this repository:
+
+```text
+https://github.com/upamada-ekanayake/SMART-PARKAI
+```
+
+Recommended Render settings:
+
+```text
+Language: Docker
+Branch: main
+Root Directory: backend
+Dockerfile Path: ./Dockerfile
+```
+
+Render environment variables:
+
+```env
+DB_URL=jdbc:postgresql://<host>/<database>?sslmode=require
+DB_USERNAME=<database-user>
+DB_PASSWORD=<database-password>
+JWT_SECRET=<strong-secret-at-least-32-characters>
+JWT_EXPIRATION_MINUTES=1440
+JPA_DDL_AUTO=update
+CORS_ALLOWED_ORIGINS=https://smart-parkai.vercel.app
+```
+
+If you also test from local Vite:
+
+```env
+CORS_ALLOWED_ORIGINS=http://localhost:5173,https://smart-parkai.vercel.app
+```
+
+After changing Render environment variables, redeploy the backend.
+
+## Deploy Frontend on Vercel
+
+Import the same GitHub repository into Vercel.
+
+Recommended Vercel settings:
+
+```text
+Framework Preset: Vite
+Root Directory: frontend
+Install Command: npm ci
+Build Command: npm run build
+Output Directory: dist
+```
+
+Vercel environment variable:
+
+```env
+VITE_API_BASE_URL=https://smart-parkai.onrender.com/api
+```
+
+After changing Vercel environment variables, redeploy the frontend.
+
 ## Docker
 
+The repository includes Dockerfiles for both apps and a Compose file.
+
 ```bash
-copy .env.example .env
 docker compose up --build
 ```
 
-## Tests
+The Compose file expects backend environment variables from a root `.env` file.
+
+## Testing
+
+Backend tests:
 
 ```bash
 cd backend
 mvn test
 ```
 
-## Database
+Frontend production build:
 
-The complete PostgreSQL schema is in `database/schema.sql`. Hibernate can also manage tables with `spring.jpa.hibernate.ddl-auto=update` during development.
+```bash
+cd frontend
+npm ci
+npm run build
+```
+
+## Common Deployment Issues
+
+### CORS blocks login or registration
+
+Browser console example:
+
+```text
+No 'Access-Control-Allow-Origin' header is present on the requested resource
+```
+
+Fix Render backend env:
+
+```env
+CORS_ALLOWED_ORIGINS=https://smart-parkai.vercel.app
+```
+
+Do not add a trailing slash.
+
+Correct:
+
+```text
+https://smart-parkai.vercel.app
+```
+
+Wrong:
+
+```text
+https://smart-parkai.vercel.app/
+```
+
+### Vercel says `cd frontend: No such file or directory`
+
+This happens when Vercel Root Directory is already set to `frontend`, but commands still include `cd frontend`.
+
+Use:
+
+```text
+Install Command: npm ci
+Build Command: npm run build
+Output Directory: dist
+```
+
+### Backend cannot connect to database
+
+Check Render environment variables:
+
+```env
+DB_URL
+DB_USERNAME
+DB_PASSWORD
+```
+
+For Neon, the JDBC URL should usually include:
+
+```text
+?sslmode=require
+```
+
+## Security Notes
+
+- Do not commit `.env` files.
+- Rotate database passwords if they are exposed in chat, screenshots, commits, or logs.
+- Use a long random `JWT_SECRET`.
+- Restrict `CORS_ALLOWED_ORIGINS` to trusted frontend domains.
+- Change or remove demo credentials before production use.
+
+## License
+
+This project includes the repository license in `LICENSE`.
